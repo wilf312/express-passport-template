@@ -138,7 +138,11 @@ app.get('/', (req, res)=>{
         // }
     }
     else {
-        res.send('<a href="/auth/twitter">Twitterにログイン</a><br><a href="/auth/facebook">Facebookにログイン</a><br><a href="/auth/google">Googleにログイン</a>');
+        let link = '';
+        link += '<a href="/auth/twitter">twitter login</a><br>';
+        link += '<a href="/auth/facebook">facebook login</a><br>';
+        link += '<a href="/auth/google">google login</a><br>';
+        res.send(link);
     }
 });
 
