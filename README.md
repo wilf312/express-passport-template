@@ -6,14 +6,14 @@ Google, Twitter, Facebook OAuth Access
 
 ## Install
 
-$ git clone https://github.com/wilf312/express-passport-template.git
-$ cd express-passport-template
-$ npm install
+    $ git clone https://github.com/wilf312/express-passport-template.git
+    $ cd express-passport-template
+    $ npm install
 
 
 ## Usage
 
-$ node app.js
+    $ node app.js
 
 Access to http://localhost:4000
 
