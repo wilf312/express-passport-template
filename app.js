@@ -64,7 +64,7 @@ passport.use(new TwitterStrategy({
         consumerSecret: app.get('TWITTER_CONSUMER_SECRET'),
         callbackURL:    DEFAULT_URL + '/auth/twitter/callback'
     },
-    function(token, tokenSecret, profile, done) {
+    (token, tokenSecret, profile, done)=> {
         done(null, profile);
     }
 ));
@@ -77,10 +77,10 @@ passport.use(new FacebookStrategy({
         callbackURL: DEFAULT_URL + '/auth/facebook/callback',
         enableProof: false
     },
-    function(accessToken, refreshToken, profile, done) {
+    (accessToken, refreshToken, profile, done)=> {
         done(null, profile);
 
-        // User.findOrCreate({ facebookId: profile.id }, function (err, user) {
+        // User.findOrCreate({ facebookId: profile.id },  (err, user)=> {
         //     return done(err, user);
         // });
     }
@@ -101,12 +101,12 @@ passport.use(new GoogleStrategy({
 
 
 
-passport.serializeUser((twitterUser, done)=> {
-    done(null, twitterUser);
+passport.serializeUser((user, done)=> {
+    done(null, user);
 });
 
-passport.deserializeUser((twitterUser, done)=> {
-    done(null, twitterUser);
+passport.deserializeUser((user, done)=> {
+    done(null, user);
 });
 
 
@@ -154,7 +154,7 @@ app.get('/auth/facebook/callback',
     passport.authenticate('facebook', {
         failureRedirect: '/login'
     }),
-    function(req, res) {
+    (req, res)=> {
         // Successful authentication, redirect home.
         res.redirect('/');
     });
