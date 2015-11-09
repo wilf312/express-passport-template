@@ -1,0 +1,22 @@
+{
+    "twitter": {
+        "dev" : {
+            "key" : "TWITTER_CONSUMER_KEY",
+            "secret" : "TWITTER_CONSUMER_SECRET"
+        },
+        "public" : {
+            "key" : "TWITTER_CONSUMER_KEY",
+            "secret" : "TWITTER_CONSUMER_SECRET"
+        }
+    },
+    "facebook": {
+        "dev" : {
+            "key" : "FACEBOOK_CONSUMER_KEY",
+            "secret" : "FACEBOOK_CONSUMER_SECRET"
+        },
+        "public" : {
+            "key" : "FACEBOOK_CONSUMER_KEY",
+            "secret" : "FACEBOOK_CONSUMER_SECRET"
+        }
+    }
+}
