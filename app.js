@@ -1,16 +1,16 @@
 'use strict';
 
 
-let express = require('express');
-let app = express();
-let passport = require('passport');
-let TwitterStrategy = require('passport-twitter').Strategy;
-let FacebookStrategy = require('passport-facebook').Strategy;
-let cookieParser = require('cookie-parser');
-let bodyParser = require('body-parser');
-let session = require('express-session');
-let conf = require('config');
+let express             = require('express');
+let app                 = express();
+let cookieParser        = require('cookie-parser');
+let bodyParser          = require('body-parser');
+let session             = require('express-session');
+let conf                = require('config');
 
+let passport            = require('passport');
+let TwitterStrategy     = require('passport-twitter').Strategy;
+let FacebookStrategy    = require('passport-facebook').Strategy;
 let GoogleStrategy      = require('passport-google-oauth').OAuth2Strategy;
 
 app.use(cookieParser());
@@ -116,23 +116,26 @@ passport.deserializeUser((user, done)=> {
 // トップ
 app.get('/', (req, res)=>{
     if(req.user){
-        let user = req.user;
-        let provider = req.user.provider;
+        // let user = req.user;
+        // let provider = req.user.provider;
         res.send(req.user);
         console.log(req.user.id);
         console.log(req.user.displayName);
         console.log(req.user.provider);
 
-        // SNSごとの判別
-        if (provider === 'twitter') {
-            console.log(req.user.username);
-        }
-        else if (provider === 'facebook') {
+        // // SNSごとの判別
+        // if (provider === 'twitter') {
+        //     console.log(req.user.username);
+        // }
+        // else if (provider === 'facebook') {
 
-        }
-        else {
+        // }
+        // else if (provider === 'google') {
 
-        }
+        // }
+        // else {
+
+        // }
     }
     else {
         res.send('<a href="/auth/twitter">Twitterにログイン</a><br><a href="/auth/facebook">Facebookにログイン</a><br><a href="/auth/google">Googleにログイン</a>');
