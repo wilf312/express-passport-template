@@ -1,7 +1,10 @@
 # express-passport-template
 
 
-Google, Twitter, Facebook OAuth Access
+Google, Twitter, Facebook OAuth Access.
+
+Future: LinkedIn, Dropbox, GitHub, Instagram, Netflix, Tumblr, heroku
+
 
 
 ## Install
