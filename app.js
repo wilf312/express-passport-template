@@ -166,8 +166,8 @@ app.get('/auth/facebook/callback',
 // Google認証設定
 app.get('/auth/google',
   passport.authenticate('google', { scope: [
-        "https://www.googleapis.com/auth/plus.me",
         "https://www.googleapis.com/auth/plus.login",
+        "https://www.googleapis.com/auth/plus.me",
         "https://www.googleapis.com/auth/userinfo.email",
         "https://www.googleapis.com/auth/userinfo.profile",
     ] }),
@@ -175,6 +175,7 @@ app.get('/auth/google',
     // The request will be redirected to Google for authentication, so this
     // function will not be called.
   });
+
 app.get('/auth/google/callback',
   passport.authenticate('google', { failureRedirect: '/login' }),
   function(req, res) {
@@ -182,7 +183,7 @@ app.get('/auth/google/callback',
   });
 
 
-console.log('App running, head to http://' + app.get('hostname') + ':' + app.get('port') + ' to sign in with SNS.');
+console.log('App running, head to '+ DEFAULT_URL +' to sign in with SNS.');
 
 app.listen(app.get('port'));
 
