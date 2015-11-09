@@ -179,10 +179,7 @@ app.get('/auth/google/callback',
   });
 
 
-
-
-
-console.log('App running, head to http://' + app.get('hostname') + ':' + app.get('port') + ' to sign in with Twitter');
+console.log('App running, head to http://' + app.get('hostname') + ':' + app.get('port') + ' to sign in with SNS.');
 
 app.listen(app.get('port'));
 
