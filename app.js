@@ -33,6 +33,8 @@ app.use(passport.session());
 app.set('hostname', 'localhost');
 app.set('port', 4000);
 
+const DEFAULT_URL = 'http://' + app.get('hostname') + ':' + app.get('port');
+
 
 // 開発環境・本番環境の引数変更
 if (app.get('env') === 'development') {
@@ -55,7 +57,7 @@ else {
 passport.use(new TwitterStrategy({
         consumerKey:    app.get('TWITTER_CONSUMER_KEY'),
         consumerSecret: app.get('TWITTER_CONSUMER_SECRET'),
-        callbackURL:    'http://' + app.get('hostname') + ':' + app.get('port') + '/auth/twitter/callback'
+        callbackURL:    DEFAULT_URL + '/auth/twitter/callback'
     },
     function(token, tokenSecret, profile, done) {
         done(null, profile);
@@ -67,7 +69,7 @@ passport.use(new TwitterStrategy({
 passport.use(new FacebookStrategy({
         clientID: app.get('FACEBOOK_CONSUMER_KEY'),
         clientSecret: app.get('FACEBOOK_CONSUMER_SECRET'),
-        callbackURL: 'http://' + app.get('hostname') + ':' + app.get('port') + '/auth/facebook/callback',
+        callbackURL: DEFAULT_URL + '/auth/facebook/callback',
         enableProof: false
     },
     function(accessToken, refreshToken, profile, done) {
