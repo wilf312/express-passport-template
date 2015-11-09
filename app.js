@@ -11,6 +11,7 @@ let bodyParser = require('body-parser');
 let session = require('express-session');
 let conf = require('config');
 
+let GoogleStrategy      = require('passport-google-oauth').OAuth2Strategy;
 
 app.use(cookieParser());
 
@@ -42,12 +43,16 @@ if (app.get('env') === 'development') {
     app.set('TWITTER_CONSUMER_SECRET', conf.twitter.dev.secret);
     app.set('FACEBOOK_CONSUMER_KEY', conf.facebook.dev.key);
     app.set('FACEBOOK_CONSUMER_SECRET', conf.facebook.dev.secret);
+    app.set('GOOGLE_CONSUMER_KEY', conf.google.dev.key);
+    app.set('GOOGLE_CONSUMER_SECRET', conf.google.dev.secret);
 }
 else {
     app.set('TWITTER_CONSUMER_KEY', conf.twitter.public.key);
     app.set('TWITTER_CONSUMER_SECRET', conf.twitter.public.secret);
     app.set('FACEBOOK_CONSUMER_KEY', conf.facebook.public.key);
     app.set('FACEBOOK_CONSUMER_SECRET', conf.facebook.public.secret);
+    app.set('GOOGLE_CONSUMER_KEY', conf.google.public.key);
+    app.set('GOOGLE_CONSUMER_SECRET', conf.google.public.secret);
 }
 
 
@@ -82,6 +87,17 @@ passport.use(new FacebookStrategy({
 ));
 
 
+passport.use(new GoogleStrategy({
+        clientID: app.get('GOOGLE_CONSUMER_KEY'),
+        clientSecret: app.get('GOOGLE_CONSUMER_SECRET'),
+        callbackURL: DEFAULT_URL + '/auth/google/callback'
+    },
+    function(accessToken, refreshToken, profile, done) {
+        process.nextTick(function () {
+            return done(null, profile);
+        });
+    }
+));
 
 
 
@@ -119,7 +135,7 @@ app.get('/', (req, res)=>{
         }
     }
     else {
-        res.send('<a href="/auth/twitter">Twitterにログイン</a><br><a href="/auth/facebook">Facebookにログイン</a>');
+        res.send('<a href="/auth/twitter">Twitterにログイン</a><br><a href="/auth/facebook">Facebookにログイン</a><br><a href="/auth/google">Googleにログイン</a>');
     }
 });
 
@@ -144,6 +160,23 @@ app.get('/auth/facebook/callback',
     });
 
 
+// Google認証設定
+app.get('/auth/google',
+  passport.authenticate('google', { scope: [
+        "https://www.googleapis.com/auth/plus.me",
+        "https://www.googleapis.com/auth/plus.login",
+        "https://www.googleapis.com/auth/userinfo.email",
+        "https://www.googleapis.com/auth/userinfo.profile",
+    ] }),
+  function(req, res){
+    // The request will be redirected to Google for authentication, so this
+    // function will not be called.
+  });
+app.get('/auth/google/callback',
+  passport.authenticate('google', { failureRedirect: '/login' }),
+  function(req, res) {
+    res.redirect('/');
+  });
 
 
 
