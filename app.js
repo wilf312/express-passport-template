@@ -13,6 +13,7 @@ let TwitterStrategy     = require('passport-twitter').Strategy;
 let FacebookStrategy    = require('passport-facebook').Strategy;
 let GoogleStrategy      = require('passport-google-oauth').OAuth2Strategy;
 let GitHubStrategy      = require('passport-github').Strategy;
+let LinkedInStrategy    = require('passport-linkedin').Strategy;
 
 app.use(cookieParser());
 
@@ -50,6 +51,8 @@ if (app.get('env') === 'development') {
     app.set('GOOGLE_CONSUMER_SECRET', conf.google.dev.secret);
     app.set('GITHUB_CONSUMER_KEY', conf.github.dev.key);
     app.set('GITHUB_CONSUMER_SECRET', conf.github.dev.secret);
+    app.set('LINKEDIN_CONSUMER_KEY', conf.linkedin.dev.key);
+    app.set('LINKEDIN_CONSUMER_SECRET', conf.linkedin.dev.secret);
 }
 else {
     app.set('TWITTER_CONSUMER_KEY', conf.twitter.public.key);
@@ -60,6 +63,8 @@ else {
     app.set('GOOGLE_CONSUMER_SECRET', conf.google.public.secret);
     app.set('GITHUB_CONSUMER_KEY', conf.github.public.key);
     app.set('GITHUB_CONSUMER_SECRET', conf.github.public.secret);
+    app.set('LINKEDIN_CONSUMER_KEY', conf.linkedin.public.key);
+    app.set('LINKEDIN_CONSUMER_SECRET', conf.linkedin.public.secret);
 }
 
 
@@ -121,6 +126,22 @@ passport.use(new GitHubStrategy({
 ));
 
 
+passport.use(new LinkedInStrategy({
+        consumerKey: app.get('LINKEDIN_CONSUMER_KEY'),
+        consumerSecret: app.get('LINKEDIN_CONSUMER_SECRET'),
+        callbackURL: DEFAULT_URL + '/auth/linkedin/callback'
+    },
+    (token, tokenSecret, profile, done)=> {
+
+        return done(null, profile);
+
+        // User.findOrCreate({ linkedinId: profile.id }, (err, user)=> {
+        //     return done(err, user);
+        // });
+    }
+    ));
+
+
 
 passport.serializeUser((user, done)=> {
     done(null, user);
@@ -164,6 +185,7 @@ app.get('/', (req, res)=>{
         link += '<a href="/auth/facebook">facebook login</a><br>';
         link += '<a href="/auth/google">google login</a><br>';
         link += '<a href="/auth/github">github login</a><br>';
+        link += '<a href="/auth/linkedin">linkedin login</a><br>';
         res.send(link);
     }
 });
@@ -207,13 +229,29 @@ app.get('/auth/google/callback',
     });
 
 // Github認証設定
-app.get('/auth/github',
-    passport.authenticate('github'));
+app.get('/auth/github', passport.authenticate('github'));
 app.get('/auth/github/callback',
     passport.authenticate('github', { failureRedirect: '/login' }),
     (req, res)=> {
         res.redirect('/');
     });
+
+
+//  LinkedIn認証設定
+app.get('/auth/linkedin', passport.authenticate('linkedin'));
+
+// Extended Permissions
+// app.get('/auth/linkedin', passport.authenticate('linkedin', { scope: ['r_basicprofile', 'r_emailaddress'] }));
+
+app.get('/auth/linkedin/callback',
+    passport.authenticate('linkedin', { failureRedirect: '/login' }),
+    (req, res)=> {
+        // Successful authentication, redirect home.
+        res.redirect('/');
+    });
+
+
+
 
 console.log('App running, head to '+ DEFAULT_URL +' to sign in with SNS.');
 
