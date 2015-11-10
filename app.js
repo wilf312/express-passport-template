@@ -12,6 +12,7 @@ let passport            = require('passport');
 let TwitterStrategy     = require('passport-twitter').Strategy;
 let FacebookStrategy    = require('passport-facebook').Strategy;
 let GoogleStrategy      = require('passport-google-oauth').OAuth2Strategy;
+let GitHubStrategy      = require('passport-github').Strategy;
 
 app.use(cookieParser());
 
@@ -36,6 +37,8 @@ app.set('port', 4000);
 
 const DEFAULT_URL = 'http://' + app.get('hostname') + ':' + app.get('port');
 
+// app.set('APP_CONSUMER_KEY', conf.google.dev.key);
+// app.set('APP_CONSUMER_SECRET', conf.google.dev.secret);
 
 // 開発環境・本番環境の引数変更
 if (app.get('env') === 'development') {
@@ -45,6 +48,8 @@ if (app.get('env') === 'development') {
     app.set('FACEBOOK_CONSUMER_SECRET', conf.facebook.dev.secret);
     app.set('GOOGLE_CONSUMER_KEY', conf.google.dev.key);
     app.set('GOOGLE_CONSUMER_SECRET', conf.google.dev.secret);
+    app.set('GITHUB_CONSUMER_KEY', conf.github.dev.key);
+    app.set('GITHUB_CONSUMER_SECRET', conf.github.dev.secret);
 }
 else {
     app.set('TWITTER_CONSUMER_KEY', conf.twitter.public.key);
@@ -53,6 +58,8 @@ else {
     app.set('FACEBOOK_CONSUMER_SECRET', conf.facebook.public.secret);
     app.set('GOOGLE_CONSUMER_KEY', conf.google.public.key);
     app.set('GOOGLE_CONSUMER_SECRET', conf.google.public.secret);
+    app.set('GITHUB_CONSUMER_KEY', conf.github.public.key);
+    app.set('GITHUB_CONSUMER_SECRET', conf.github.public.secret);
 }
 
 
@@ -92,10 +99,24 @@ passport.use(new GoogleStrategy({
         clientSecret: app.get('GOOGLE_CONSUMER_SECRET'),
         callbackURL: DEFAULT_URL + '/auth/google/callback'
     },
-    function(accessToken, refreshToken, profile, done) {
-        process.nextTick(function () {
+    (accessToken, refreshToken, profile, done)=> {
+        process.nextTick( ()=> {
             return done(null, profile);
         });
+    }
+));
+
+passport.use(new GitHubStrategy({
+        clientID: app.get('GITHUB_CONSUMER_KEY'),
+        clientSecret: app.get('GITHUB_CONSUMER_SECRET'),
+        callbackURL: DEFAULT_URL + '/auth/github/callback'
+    },
+    (accessToken, refreshToken, profile, done)=> {
+        return done(null, profile);
+
+        // User.findOrCreate({ githubId: profile.id }, (err, user)=> {
+        //     return done(err, user);
+        // });
     }
 ));
 
@@ -142,6 +163,7 @@ app.get('/', (req, res)=>{
         link += '<a href="/auth/twitter">twitter login</a><br>';
         link += '<a href="/auth/facebook">facebook login</a><br>';
         link += '<a href="/auth/google">google login</a><br>';
+        link += '<a href="/auth/github">github login</a><br>';
         res.send(link);
     }
 });
@@ -169,23 +191,29 @@ app.get('/auth/facebook/callback',
 
 // Google認証設定
 app.get('/auth/google',
-  passport.authenticate('google', { scope: [
+    passport.authenticate('google', { scope: [
         "https://www.googleapis.com/auth/plus.login",
         "https://www.googleapis.com/auth/plus.me",
         "https://www.googleapis.com/auth/userinfo.email",
         "https://www.googleapis.com/auth/userinfo.profile",
     ] }),
-  function(req, res){
-    // The request will be redirected to Google for authentication, so this
-    // function will not be called.
-  });
+    (req, res)=> {
+    });
 
 app.get('/auth/google/callback',
-  passport.authenticate('google', { failureRedirect: '/login' }),
-  function(req, res) {
-    res.redirect('/');
-  });
+    passport.authenticate('google', { failureRedirect: '/login' }),
+    (req, res)=> {
+        res.redirect('/');
+    });
 
+// Github認証設定
+app.get('/auth/github',
+    passport.authenticate('github'));
+app.get('/auth/github/callback',
+    passport.authenticate('github', { failureRedirect: '/login' }),
+    (req, res)=> {
+        res.redirect('/');
+    });
 
 console.log('App running, head to '+ DEFAULT_URL +' to sign in with SNS.');
 
