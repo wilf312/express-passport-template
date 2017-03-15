@@ -1,5 +1,7 @@
 # express-passport-template
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/wilf312/express-passport-template.svg)](https://greenkeeper.io/)
+
 
 Google, Twitter, Facebook, GitHub, LinkedIn OAuth Access.
 
